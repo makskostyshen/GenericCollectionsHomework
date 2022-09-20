@@ -21,7 +21,6 @@ public class MyHashMap<K, V> {
 
     public V put(K key, V value){
         if(size >= threshold){
-            System.out.println("rearranging:");
             rearrange();
         }
 
@@ -29,15 +28,13 @@ public class MyHashMap<K, V> {
         MapNode<K, V> curr = getNode(index);
         MapNode<K, V> prev = null;
 
-        System.out.println("putting " + key + " with hash " + hash(key) + " on index " + index);
-
         while(true){
             if (curr == null){
                 createNewNode(key, value, prev, index);
                 return null;
             }
             else if (key.equals(curr.getKey())){
-                return changeNodeValue(key, value, curr, index);
+                return changeNodeValue(value, curr);
             }
             prev = curr;
             curr = curr.getNext();
@@ -45,8 +42,7 @@ public class MyHashMap<K, V> {
     }
 
 
-    private V changeNodeValue(K key, V value, MapNode<K,V> curr, int index) {
-        System.out.println("\tchanging node value");
+    private V changeNodeValue(V value, MapNode<K,V> curr) {
         MapNode<K, V> changing = curr;
 
         V oldValue = changing.getValue();
@@ -57,14 +53,11 @@ public class MyHashMap<K, V> {
 
 
     private void createNewNode(K key, V value, MapNode<K,V> prev, int index) {
-        System.out.println("\tcreating new node");
         MapNode<K, V> newNode = new MapNode<>(key, value, null);
         if(prev == null){
-            System.out.println("\ton new place");
             buckets[index] = newNode;
         }
         else{
-            System.out.println("\tafter " + prev.getKey());
             prev.setNext(newNode);
         }
         size++;
@@ -144,9 +137,6 @@ public class MyHashMap<K, V> {
 
         Object[] oldBuckets = buckets;
         buckets = new Object[currentBucketsNumber];
-
-        System.out.println("\tnew bucketsSize: " + buckets.length);
-        System.out.println("\tnew threshold: " + threshold);
 
         for(int i = 0; i < oldBuckets.length; i++){
             MapNode<K, V> node = getNode(i);
